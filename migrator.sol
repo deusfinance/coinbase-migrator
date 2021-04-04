@@ -30,7 +30,7 @@ contract Migrator is AccessControl {
     }
 
 	function migrateFor(address user, uint256 amount) public {
-		IERC20(coinbase).transferFrom(msg.sender, user, amount);
+		IERC20(coinbase).transferFrom(msg.sender, address(this), amount);
 		IERC20(dCoin).mint(user, amount);
 		Migrate(user, amount);
 	}
