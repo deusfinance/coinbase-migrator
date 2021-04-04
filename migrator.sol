@@ -16,19 +16,13 @@ contract Migrator is AccessControl {
 
 	event Migrate(address user, uint256 amount);
 
-	address public coinbase;
-	address public dCoin;
+	address public fromCoin;
 	uint256 public ratio;
 	uint256 public scale = 1e18;
 
-	constructor (
-		address _coinbase,
-		address _dCoin
-	) {
+	constructor (address _fromCoin) {
 		_setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-
-		coinbase = _coinbase;
-		dCoin = _dCoin;
+		fromCoin = _fromCoin;
 	}
 
 	function setRatio(uint256 _ratio) external {
@@ -36,18 +30,18 @@ contract Migrator is AccessControl {
 		ratio = _ratio;
 	}
 
-	function migrateFor(address user, uint256 amount) public {
-		IERC20(coinbase).transferFrom(msg.sender, address(this), amount);
-		IERC20(dCoin).mint(user, amount * ratio / scale);
+	function migrateFor(address user, uint256 amount, address toCoin) public {
+		IERC20(fromCoin).transferFrom(msg.sender, address(this), amount);
+		IERC20(toCoin).mint(user, amount * ratio / scale);
 		Migrate(user, amount);
 	}
 
-	function migrate(uint256 amount) external {
-		migrateFor(msg.sender, amount);
+	function migrate(uint256 amount, address toCoin) external {
+		migrateFor(msg.sender, amount, toCoin);
 	}
 
 	function withdraw(address to, uint256 amount) public {
 		require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
-		IERC20(coinbase).transfer(to, amount);
+		IERC20(fromCoin).transfer(to, amount);
 	}
 }
