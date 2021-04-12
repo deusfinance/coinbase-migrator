@@ -8,8 +8,8 @@ import 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 
 interface IERC20 {
 	function mint(address to, uint256 amount) external;
+	function burn(address from, uint256 amount) external;
 	function transfer(address recipient, uint256 amount) external returns (bool);
-	function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 }
 
 contract Migrator is AccessControl {
@@ -43,9 +43,9 @@ contract Migrator is AccessControl {
 	}
 
 	function migrateFor(address user, uint256 amount, address toCoin) public openMigrate {
-		IERC20(fromCoin).transferFrom(msg.sender, address(this), amount);
+		IERC20(fromCoin).burn(msg.sender, amount);
 		IERC20(toCoin).mint(user, amount * ratio / scale);
-		Migrate(user, amount);
+		Migrate(user, amount * ratio / scale);
 	}
 
 	function migrate(uint256 amount, address toCoin) external {
