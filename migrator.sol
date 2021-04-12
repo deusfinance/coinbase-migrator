@@ -33,6 +33,11 @@ contract Migrator is AccessControl {
 		_;
 	}
 
+	function setFromCoin(address _fromCoin) external {
+		require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
+		fromCoin = _fromCoin;
+	}
+
 	function setEndBlock(uint256 _endBlock) external {
 		require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
 		endBlock = _endBlock;
