@@ -19,10 +19,22 @@ contract Migrator is AccessControl {
 	address public fromCoin;
 	uint256 public ratio;
 	uint256 public scale = 1e18;
+	uint256 public endBlock;
 
-	constructor (address _fromCoin) {
+	constructor (address _fromCoin, uint256 _endBlock) {
 		_setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 		fromCoin = _fromCoin;
+		endBlock = _endBlock;
+	}
+
+	modifier openMigrate {
+		require(block.number <= endBlock, "Migration is closed");
+		_;
+	}
+
+	function setEndBlock(uint256 _endBlock) external {
+		require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
+		endBlock = _endBlock;
 	}
 
 	function setRatio(uint256 _ratio) external {
@@ -30,7 +42,7 @@ contract Migrator is AccessControl {
 		ratio = _ratio;
 	}
 
-	function migrateFor(address user, uint256 amount, address toCoin) public {
+	function migrateFor(address user, uint256 amount, address toCoin) public openMigrate {
 		IERC20(fromCoin).transferFrom(msg.sender, address(this), amount);
 		IERC20(toCoin).mint(user, amount * ratio / scale);
 		Migrate(user, amount);
