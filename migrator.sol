@@ -58,8 +58,8 @@ contract Migrator is AccessControl {
 		migrateFor(msg.sender, amount, toCoin);
 	}
 
-	function withdraw(address to, uint256 amount) public {
+	function withdraw(address to, uint256 amount, address token) public {
 		require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not an admin");
-		IERC20(fromCoin).transfer(to, amount);
+		IERC20(token).transfer(to, amount);
 	}
 }
