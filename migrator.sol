@@ -21,9 +21,10 @@ contract Migrator is AccessControl {
 	uint256 public scale = 1e18;
 	uint256 public endBlock;
 
-	constructor (address _fromCoin, uint256 _endBlock) {
+	constructor (address _fromCoin, uint256 _ratio, uint256 _endBlock) {
 		_setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 		fromCoin = _fromCoin;
+		ratio = _ratio;
 		endBlock = _endBlock;
 	}
 
