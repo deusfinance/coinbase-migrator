@@ -1,5 +1,6 @@
-# DEPRICATED
-# coinbase-migrator
+# DEPRECATED
+
+## coinbase-migrator
 Convert WCOINBASE-IOU to dCOIN
 
 
